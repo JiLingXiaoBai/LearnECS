@@ -9,20 +9,38 @@ partial struct UnitMoverSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var (localTransform, moveSpeed, physicsVelocity)
-                 in SystemAPI.Query<
-                     RefRW<LocalTransform>,
-                     RefRO<MoveSpeed>,
-                     RefRW<PhysicsVelocity>>())
+        var unitMoverJob = new UnitMoverJob
         {
-            float3 targetPosition = localTransform.ValueRO.Position + new float3(10, 0, 0);
-            float3 moveDirection = targetPosition - localTransform.ValueRO.Position;
-            moveDirection = math.normalize(moveDirection);
+            deltaTime = SystemAPI.Time.DeltaTime
+        };
+        
+        unitMoverJob.ScheduleParallel();
+    }
+}
 
-            localTransform.ValueRW.Rotation = quaternion.LookRotationSafe(moveDirection, math.up());
-            physicsVelocity.ValueRW.Linear = moveDirection * moveSpeed.ValueRO.value;
-            physicsVelocity.ValueRW.Angular = float3.zero;
-            
+[BurstCompile]
+public partial struct UnitMoverJob : IJobEntity
+{
+    public float deltaTime;
+
+    private void Execute(ref LocalTransform localTransform, in UnitMover unitMover, ref PhysicsVelocity physicsVelocity)
+    {
+        float3 moveDirection = unitMover.targetPosition - localTransform.Position;
+
+        float reachedTargetDistanceSq = 2f;
+        if (math.lengthsq(moveDirection) < reachedTargetDistanceSq)
+        {
+            physicsVelocity.Linear = float3.zero;
+            physicsVelocity.Angular = float3.zero;
+            return;
         }
+        
+        moveDirection = math.normalize(moveDirection);
+
+        localTransform.Rotation =
+            math.slerp(localTransform.Rotation, quaternion.LookRotationSafe(moveDirection, math.up()),
+                deltaTime * unitMover.rotationSpeed);
+        physicsVelocity.Linear = moveDirection * unitMover.moveSpeed;
+        physicsVelocity.Angular = float3.zero;
     }
 }
