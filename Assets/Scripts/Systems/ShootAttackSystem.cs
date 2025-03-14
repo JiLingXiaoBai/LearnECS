@@ -12,7 +12,8 @@ partial struct ShootAttackSystem : ISystem
 
         foreach ((RefRW<LocalTransform> localTransform, RefRW<ShootAttack> shootAttack,
                      RefRO<Target> target, RefRW<UnitMover> unitMover) in SystemAPI
-                     .Query<RefRW<LocalTransform>, RefRW<ShootAttack>, RefRO<Target>, RefRW<UnitMover>>())
+                     .Query<RefRW<LocalTransform>, RefRW<ShootAttack>, RefRO<Target>, RefRW<UnitMover>>()
+                     .WithDisabled<MoveOverride>())
         {
             if (target.ValueRO.targetEntity == Entity.Null)
             {
@@ -50,7 +51,7 @@ partial struct ShootAttackSystem : ISystem
             Entity bulletEntity = state.EntityManager.Instantiate(entitiesReferences.bulletPrefabEntity);
             float3 bulletSpawnWorldPosition =
                 localTransform.ValueRO.TransformPoint(shootAttack.ValueRO.bulletSpawnLocalPosition);
-            
+
             SystemAPI.SetComponent(bulletEntity, LocalTransform.FromPosition(bulletSpawnWorldPosition));
 
             RefRW<Bullet> bulletBullet = SystemAPI.GetComponentRW<Bullet>(bulletEntity);
@@ -61,8 +62,6 @@ partial struct ShootAttackSystem : ISystem
 
             shootAttack.ValueRW.onShoot.isTriggered = true;
             shootAttack.ValueRW.onShoot.shootFromPosition = bulletSpawnWorldPosition;
-
-
         }
     }
 }

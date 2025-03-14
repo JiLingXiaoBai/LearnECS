@@ -107,20 +107,21 @@ public class UnitSelectionManager : MonoBehaviour
         {
             var mouseWorldPosition = MouseWorldPosition.Instance.GetPosition();
             var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-            var entityQuery = new EntityQueryBuilder(Allocator.Temp).WithAll<UnitMover, Selected>()
+            var entityQuery = new EntityQueryBuilder(Allocator.Temp).WithAll<Selected>().WithPresent<MoveOverride>()
                 .Build(entityManager);
 
             var entityArray = entityQuery.ToEntityArray(Allocator.Temp);
-            var unitMoverArray = entityQuery.ToComponentDataArray<UnitMover>(Allocator.Temp);
+            var moveOverrideArray = entityQuery.ToComponentDataArray<MoveOverride>(Allocator.Temp);
             var movePositionArray = GenerateMovePositionArray(mouseWorldPosition, entityArray.Length);
 
-            for (int i = 0; i < unitMoverArray.Length; i++)
+            for (int i = 0; i < moveOverrideArray.Length; i++)
             {
-                var unitMover = unitMoverArray[i];
-                unitMover.targetPosition = movePositionArray[i];
-                unitMoverArray[i] = unitMover;
+                var moveOverride = moveOverrideArray[i];
+                moveOverride.targetPosition = movePositionArray[i];
+                moveOverrideArray[i] = moveOverride;
+                entityManager.SetComponentEnabled<MoveOverride>(entityArray[i], true);
             }
-            entityQuery.CopyFromComponentDataArray(unitMoverArray);
+            entityQuery.CopyFromComponentDataArray(moveOverrideArray);
         }
     }
 

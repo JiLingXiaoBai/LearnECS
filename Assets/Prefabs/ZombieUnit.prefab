@@ -97,7 +97,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 85cd5279f313d294c8d4eb59ece3cb5b, type: 2}
     - target: {fileID: 7396965584794019185, guid: ffca1cdb2d13e334a9b83c6cd9b30eb1, type: 3}
       propertyPath: range
-      value: 5
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7396965584794019185, guid: ffca1cdb2d13e334a9b83c6cd9b30eb1, type: 3}
+      propertyPath: timerMax
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 7396965584794019185, guid: ffca1cdb2d13e334a9b83c6cd9b30eb1, type: 3}
       propertyPath: targetFaction
@@ -120,6 +124,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2042336529023802028, guid: ffca1cdb2d13e334a9b83c6cd9b30eb1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1132716795088886494}
+    - targetCorrespondingSourceObject: {fileID: 2042336529023802028, guid: ffca1cdb2d13e334a9b83c6cd9b30eb1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1028767096792042796}
     - targetCorrespondingSourceObject: {fileID: 2545019874952494808, guid: ffca1cdb2d13e334a9b83c6cd9b30eb1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1192454116062043926}
@@ -154,6 +161,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitPositionTransform: {fileID: 4276345794408850155}
+--- !u!114 &1028767096792042796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2298212221669431679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fdd938a4310fff4d9ff47d76fd77e74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerMax: 0.5
+  damageAmount: 10
+  colliderSize: 0.5
 --- !u!1 &2369614141780393227 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2545019874952494808, guid: ffca1cdb2d13e334a9b83c6cd9b30eb1, type: 3}
