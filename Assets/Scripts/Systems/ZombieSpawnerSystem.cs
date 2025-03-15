@@ -6,6 +6,13 @@ using Unity.Transforms;
 partial struct ZombieSpawnerSystem : ISystem
 {
     [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<EntitiesReferences>();
+    }
+
+
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         EntitiesReferences entitiesReferences = SystemAPI.GetSingleton<EntitiesReferences>();
@@ -24,7 +31,7 @@ partial struct ZombieSpawnerSystem : ISystem
 
             Entity zombieEntity = state.EntityManager.Instantiate(entitiesReferences.zombiePrefabEntity);
             SystemAPI.SetComponent(zombieEntity, LocalTransform.FromPosition(localTransform.ValueRO.Position));
-            
+
             entityCommandBuffer.AddComponent(zombieEntity, new RandomWalking
             {
                 originPosition = localTransform.ValueRO.Position,
