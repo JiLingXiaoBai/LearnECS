@@ -169,6 +169,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5837727141089389219, guid: ffca1cdb2d13e334a9b83c6cd9b30eb1, type: 3}
+      propertyPath: idleAnimationType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5837727141089389219, guid: ffca1cdb2d13e334a9b83c6cd9b30eb1, type: 3}
+      propertyPath: walkAnimationType
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7396965584794019185, guid: ffca1cdb2d13e334a9b83c6cd9b30eb1, type: 3}
       propertyPath: range
       value: 15
