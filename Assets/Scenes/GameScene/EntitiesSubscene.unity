@@ -619,6 +619,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationDataListSO: {fileID: 11400000, guid: 23425856d54fbdc45828313d9e16def2, type: 2}
+  defaultMaterial: {fileID: 2100000, guid: dd5ad9aa2bda4b5429d105dfedfc7125, type: 2}
 --- !u!4 &1758453823
 Transform:
   m_ObjectHideFlags: 0

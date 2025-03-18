@@ -11,20 +11,6 @@ partial struct ResetEventsSystem : ISystem
         new ResetHealthEventsJob().ScheduleParallel();
         new ResetShootAttackEventsJob().ScheduleParallel();
         new ResetMeleeAttackEventsJob().ScheduleParallel();
-
-        // foreach (var selected in SystemAPI.Query<RefRW<Selected>>().WithPresent<Selected>())
-        // {
-        //     selected.ValueRW.onSelected = false;
-        //     selected.ValueRW.onDeselected = false;
-        // }
-        // foreach (var health in SystemAPI.Query<RefRW<Health>>())
-        // {
-        //     health.ValueRW.onHealthChanged = false;
-        // }
-        // foreach (var shootAttack in SystemAPI.Query<RefRW<ShootAttack>>())
-        // {
-        //     shootAttack.ValueRW.onShoot.isTriggered = false;
-        // }
     }
 }
 

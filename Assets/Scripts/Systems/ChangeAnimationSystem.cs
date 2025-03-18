@@ -21,31 +21,6 @@ partial struct ChangeAnimationSystem : ISystem
             animationDataBlobArrayBlobAssetReference = animationDataHolder.animationDataBlobArrayBlobAssetReference
         };
         changeAnimationJob.ScheduleParallel();
-
-        // foreach ((RefRW<ActiveAnimation> activeAnimation, RefRW<MaterialMeshInfo> materialMeshInfo) in SystemAPI
-        //              .Query<RefRW<ActiveAnimation>, RefRW<MaterialMeshInfo>>())
-        // {
-        //     if (activeAnimation.ValueRO.activeAnimationType == AnimationDataSO.AnimationType.SoldierShoot)
-        //     {
-        //         continue;
-        //     }
-        //     if (activeAnimation.ValueRO.activeAnimationType == AnimationDataSO.AnimationType.ZombieAttack)
-        //     {
-        //         continue;
-        //     }
-        //
-        //     if (activeAnimation.ValueRO.activeAnimationType != activeAnimation.ValueRO.nextAnimationType)
-        //     {
-        //         activeAnimation.ValueRW.frame = 0;
-        //         activeAnimation.ValueRW.frameTimer = 0;
-        //         activeAnimation.ValueRW.activeAnimationType = activeAnimation.ValueRO.nextAnimationType;
-        //
-        //         ref AnimationData animationData =
-        //             ref animationDataHolder.animationDataBlobArrayBlobAssetReference.Value[
-        //                 (int)activeAnimation.ValueRW.activeAnimationType];
-        //         materialMeshInfo.ValueRW.MeshID = animationData.batchMeshIdBlobArray[0];
-        //     }
-        // }
     }
 }
 
@@ -74,7 +49,7 @@ public partial struct ChangeAnimationJob : IJobEntity
             ref AnimationData animationData =
                 ref animationDataBlobArrayBlobAssetReference.Value[
                     (int)activeAnimation.activeAnimationType];
-            materialMeshInfo.MeshID = animationData.batchMeshIdBlobArray[0];
+            materialMeshInfo.Mesh = animationData.intMeshIdBlobArray[0];
         }
     }
 }
