@@ -289,7 +289,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f98c832c71c9486409192d6485b5feee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timerMax: 0.2
-  damageAmount: 5
-  attackDistance: 13
+  timerMax: 0.5
+  damageAmount: 3
+  attackDistance: 11
   bulletSpawnPositionTransform: {fileID: 8442515316535526353}
