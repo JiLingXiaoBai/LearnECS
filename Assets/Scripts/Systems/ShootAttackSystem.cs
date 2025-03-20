@@ -46,6 +46,29 @@ partial struct ShootAttackSystem : ISystem
             quaternion targetRotation = quaternion.LookRotation(aimDirection, math.up());
             localTransform.ValueRW.Rotation = math.slerp(localTransform.ValueRO.Rotation, targetRotation,
                 unitMover.ValueRO.rotationSpeed * SystemAPI.Time.DeltaTime);
+        }
+
+        foreach ((RefRW<LocalTransform> localTransform, RefRW<ShootAttack> shootAttack,
+                     RefRO<Target> target, Entity entity) in SystemAPI
+                     .Query<RefRW<LocalTransform>, RefRW<ShootAttack>, RefRO<Target>>()
+                     .WithEntityAccess())
+        {
+            if (target.ValueRO.targetEntity == Entity.Null)
+            {
+                continue;
+            }
+
+            LocalTransform targetLocalTransform = SystemAPI.GetComponent<LocalTransform>(target.ValueRO.targetEntity);
+            if (math.distancesq(localTransform.ValueRO.Position, targetLocalTransform.Position) >
+                math.pow(shootAttack.ValueRO.attackDistance, 2))
+            {
+                continue;
+            }
+
+            if (SystemAPI.HasComponent<MoveOverride>(entity) && SystemAPI.IsComponentEnabled<MoveOverride>(entity))
+            {
+                continue;
+            }
 
             shootAttack.ValueRW.timer -= SystemAPI.Time.DeltaTime;
             if (shootAttack.ValueRW.timer > 0)
