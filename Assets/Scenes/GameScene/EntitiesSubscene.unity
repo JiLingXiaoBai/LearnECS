@@ -376,6 +376,7 @@ GameObject:
   - component: {fileID: 485855768}
   - component: {fileID: 485855767}
   - component: {fileID: 485855769}
+  - component: {fileID: 485855770}
   m_Layer: 7
   m_Name: BuildingTower
   m_TagString: Untagged
@@ -528,6 +529,19 @@ MonoBehaviour:
   damageAmount: 5
   attackDistance: 20
   bulletSpawnPositionTransform: {fileID: 112454168}
+--- !u!114 &485855770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 485855759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 607178c8ee4cc024bbcb27472a7af58e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildingType: 2
 --- !u!1001 &497235084
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -971,6 +985,7 @@ GameObject:
   - component: {fileID: 1408426988}
   - component: {fileID: 1408426989}
   - component: {fileID: 1408426990}
+  - component: {fileID: 1408426991}
   m_Layer: 7
   m_Name: BuildingZombieSpawner
   m_TagString: Untagged
@@ -1098,6 +1113,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   factionType: 1
+--- !u!114 &1408426991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408426982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 607178c8ee4cc024bbcb27472a7af58e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildingType: 1
 --- !u!1 &1437004690 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7489625056584806521, guid: 349e1d39d9eb0304c8c56338d1d04f5b, type: 3}
