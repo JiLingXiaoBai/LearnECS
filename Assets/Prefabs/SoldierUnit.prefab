@@ -185,6 +185,10 @@ PrefabInstance:
       propertyPath: shootAnimationType
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 6643678837434551615, guid: ffca1cdb2d13e334a9b83c6cd9b30eb1, type: 3}
+      propertyPath: factionType
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7396965584794019185, guid: ffca1cdb2d13e334a9b83c6cd9b30eb1, type: 3}
       propertyPath: range
       value: 15
