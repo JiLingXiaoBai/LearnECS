@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class BuildingBarracksUI : MonoBehaviour
 {
     [SerializeField] private Button soldierButton;
+    [SerializeField] private Button scoutButton;
     [SerializeField] private Image progressBarImage;
     [SerializeField] private RectTransform unitQueueContainer;
     [SerializeField] private RectTransform unitQueueTemplate;
@@ -17,14 +18,21 @@ public class BuildingBarracksUI : MonoBehaviour
     {
         soldierButton.onClick.AddListener(() =>
         {
-            DynamicBuffer<SpawnUnitTypeBuffer> spawnUnitTypeDynamicBuffer =
-                entityManager.GetBuffer<SpawnUnitTypeBuffer>(buildingBarracksEntity, false);
-            spawnUnitTypeDynamicBuffer.Add(new SpawnUnitTypeBuffer
+            entityManager.SetComponentData(buildingBarracksEntity, new BuildingBarracksUnitEnqueue
             {
                 unitType = UnitTypeSO.UnitType.Soldier,
             });
+            entityManager.SetComponentEnabled<BuildingBarracksUnitEnqueue>(buildingBarracksEntity, true);
         });
-        
+        scoutButton.onClick.AddListener(() =>
+        {
+            entityManager.SetComponentData(buildingBarracksEntity, new BuildingBarracksUnitEnqueue
+            {
+                unitType = UnitTypeSO.UnitType.Scout,
+            });
+            entityManager.SetComponentEnabled<BuildingBarracksUnitEnqueue>(buildingBarracksEntity, true);
+        });
+
         unitQueueTemplate.gameObject.SetActive(false);
     }
 
@@ -32,13 +40,23 @@ public class BuildingBarracksUI : MonoBehaviour
     {
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         UnitSelectionManager.Instance.OnSelectedEntitiesChanged += UnitSelectionManager_OnSelectedEntitiesChanged;
+        DOTSEventsManager.Instance.OnBarracksUnitQueueChanged += DOTSEventsManager_OnBarracksUnitQueueChanged;
         Hide();
     }
-    
+
     private void Update()
     {
         UpdateProgressBarVisual();
-        UpdateUnitQueueVisual();
+        // UpdateUnitQueueVisual();
+    }
+
+    private void DOTSEventsManager_OnBarracksUnitQueueChanged(object sender, System.EventArgs e)
+    {
+        Entity entity = (Entity)sender;
+        if (entity == buildingBarracksEntity)
+        {
+            UpdateUnitQueueVisual();
+        }
     }
 
     private void UnitSelectionManager_OnSelectedEntitiesChanged(object sender, System.EventArgs e)
@@ -50,6 +68,8 @@ public class BuildingBarracksUI : MonoBehaviour
         {
             buildingBarracksEntity = entityArray[0];
             Show();
+            UpdateProgressBarVisual();
+            UpdateUnitQueueVisual();
         }
         else
         {
@@ -88,7 +108,7 @@ public class BuildingBarracksUI : MonoBehaviour
             }
             Destroy(child.gameObject);
         }
-        
+
         DynamicBuffer<SpawnUnitTypeBuffer> spawnUnitTypeDynamicBuffer =
             entityManager.GetBuffer<SpawnUnitTypeBuffer>(buildingBarracksEntity, true);
 
@@ -96,6 +116,9 @@ public class BuildingBarracksUI : MonoBehaviour
         {
             RectTransform unitQueueRectTransform = Instantiate(unitQueueTemplate, unitQueueContainer);
             unitQueueRectTransform.gameObject.SetActive(true);
+            
+            UnitTypeSO unitTypeSO = GameAssets.Instance.unitTypeListSO.GetUnitTypeSO(spawnUnityTypeBuffer.unitType);
+            unitQueueRectTransform.GetComponent<Image>().sprite = unitTypeSO.sprite;
         }
     }
 
