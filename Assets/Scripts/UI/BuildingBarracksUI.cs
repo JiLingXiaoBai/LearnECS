@@ -1,4 +1,3 @@
-using System;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
@@ -8,6 +7,8 @@ public class BuildingBarracksUI : MonoBehaviour
 {
     [SerializeField] private Button soldierButton;
     [SerializeField] private Image progressBarImage;
+    [SerializeField] private RectTransform unitQueueContainer;
+    [SerializeField] private RectTransform unitQueueTemplate;
 
     private Entity buildingBarracksEntity;
     private EntityManager entityManager;
@@ -23,6 +24,8 @@ public class BuildingBarracksUI : MonoBehaviour
                 unitType = UnitTypeSO.UnitType.Soldier,
             });
         });
+        
+        unitQueueTemplate.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -30,6 +33,12 @@ public class BuildingBarracksUI : MonoBehaviour
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         UnitSelectionManager.Instance.OnSelectedEntitiesChanged += UnitSelectionManager_OnSelectedEntitiesChanged;
         Hide();
+    }
+    
+    private void Update()
+    {
+        UpdateProgressBarVisual();
+        UpdateUnitQueueVisual();
     }
 
     private void UnitSelectionManager_OnSelectedEntitiesChanged(object sender, System.EventArgs e)
@@ -66,6 +75,27 @@ public class BuildingBarracksUI : MonoBehaviour
         else
         {
             progressBarImage.fillAmount = buildingBarracks.progress / buildingBarracks.progressMax;
+        }
+    }
+
+    private void UpdateUnitQueueVisual()
+    {
+        foreach (Transform child in unitQueueContainer)
+        {
+            if (child == unitQueueTemplate)
+            {
+                continue;
+            }
+            Destroy(child.gameObject);
+        }
+        
+        DynamicBuffer<SpawnUnitTypeBuffer> spawnUnitTypeDynamicBuffer =
+            entityManager.GetBuffer<SpawnUnitTypeBuffer>(buildingBarracksEntity, true);
+
+        foreach (SpawnUnitTypeBuffer spawnUnityTypeBuffer in spawnUnitTypeDynamicBuffer)
+        {
+            RectTransform unitQueueRectTransform = Instantiate(unitQueueTemplate, unitQueueContainer);
+            unitQueueRectTransform.gameObject.SetActive(true);
         }
     }
 
