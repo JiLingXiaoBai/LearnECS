@@ -1,6 +1,7 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Transforms;
+using UnityEngine;
 
 partial struct BuildingBarracksSystem : ISystem
 {
@@ -10,13 +11,27 @@ partial struct BuildingBarracksSystem : ISystem
         state.RequireForUpdate<EntitiesReferences>();
     }
 
-    [BurstCompile]
+    // [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         EntitiesReferences entitiesReferences = SystemAPI.GetSingleton<EntitiesReferences>();
-        foreach ((RefRO<LocalTransform> localTransform, RefRW<BuildingBarracks> buildingBarracks) in SystemAPI
-                     .Query<RefRO<LocalTransform>, RefRW<BuildingBarracks>>())
+        foreach ((RefRO<LocalTransform> localTransform, RefRW<BuildingBarracks> buildingBarracks,
+                     DynamicBuffer<SpawnUnitTypeBuffer> spawnUnitTypeDynamicBuffer) in SystemAPI
+                     .Query<RefRO<LocalTransform>, RefRW<BuildingBarracks>, DynamicBuffer<SpawnUnitTypeBuffer>>())
         {
+            if (spawnUnitTypeDynamicBuffer.IsEmpty)
+            {
+                continue;
+            }
+
+            if (buildingBarracks.ValueRO.activeUnitType != spawnUnitTypeDynamicBuffer[0].unitType)
+            {
+                buildingBarracks.ValueRW.activeUnitType = spawnUnitTypeDynamicBuffer[0].unitType;
+                UnitTypeSO activeUnitTypeSO =
+                    GameAssets.Instance.unitTypeListSO.GetUnitTypeSO(buildingBarracks.ValueRW.activeUnitType);
+                buildingBarracks.ValueRW.progressMax = activeUnitTypeSO.progressMax;
+            }
+
             buildingBarracks.ValueRW.progress += SystemAPI.Time.DeltaTime;
             if (buildingBarracks.ValueRO.progress < buildingBarracks.ValueRO.progressMax)
             {
@@ -24,9 +39,16 @@ partial struct BuildingBarracksSystem : ISystem
             }
             buildingBarracks.ValueRW.progress = 0;
 
-            Entity spawnedUnitEntity = state.EntityManager.Instantiate(entitiesReferences.soldierPrefabEntity);
+            UnitTypeSO.UnitType unitType = spawnUnitTypeDynamicBuffer[0].unitType;
+            UnitTypeSO unitTypeSO = GameAssets.Instance.unitTypeListSO.GetUnitTypeSO(unitType);
+            spawnUnitTypeDynamicBuffer.RemoveAt(0);
+            Entity spawnedUnitEntity = state.EntityManager.Instantiate(unitTypeSO.GetPrefabEntity(entitiesReferences));
             SystemAPI.SetComponent(spawnedUnitEntity, LocalTransform.FromPosition(localTransform.ValueRO.Position));
-            
+            SystemAPI.SetComponent(spawnedUnitEntity, new MoveOverride
+            {
+                targetPosition = localTransform.ValueRO.Position + buildingBarracks.ValueRO.rallyPositionOffset
+            });
+            SystemAPI.SetComponentEnabled<MoveOverride>(spawnedUnitEntity, true);
         }
     }
 }

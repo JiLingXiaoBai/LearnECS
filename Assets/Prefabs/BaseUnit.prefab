@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 6756970973360992136}
   - component: {fileID: 5837727141089389219}
   - component: {fileID: 6643678837434551615}
+  - component: {fileID: 4003409169859464896}
   m_Layer: 6
   m_Name: BaseUnit
   m_TagString: Untagged
@@ -123,7 +124,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c298192d907ac84a86b6f6c8ee0c079, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  faction: 0
 --- !u!114 &7396965584794019185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,6 +257,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   factionType: 0
+--- !u!114 &4003409169859464896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2042336529023802028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9e92d6824cb16947ad87afe97173f0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitType: 0
 --- !u!1 &2545019874952494808
 GameObject:
   m_ObjectHideFlags: 0

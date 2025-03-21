@@ -10,4 +10,6 @@ public class GameAssets : MonoBehaviour
     {
         Instance = this;
     }
+
+    public UnitTypeListSO unitTypeListSO;
 }

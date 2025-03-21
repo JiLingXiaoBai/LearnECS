@@ -177,6 +177,10 @@ PrefabInstance:
       propertyPath: moveSpeed
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 4003409169859464896, guid: ffca1cdb2d13e334a9b83c6cd9b30eb1, type: 3}
+      propertyPath: unitType
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5837727141089389219, guid: ffca1cdb2d13e334a9b83c6cd9b30eb1, type: 3}
       propertyPath: aimAnimationType
       value: 11
