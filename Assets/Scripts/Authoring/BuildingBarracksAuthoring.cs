@@ -16,19 +16,7 @@ public class BuildingBarracksAuthoring : MonoBehaviour
                 progressMax = authoring.progressMax,
                 rallyPositionOffset = new float3(10, 0, 0),
             });
-            DynamicBuffer<SpawnUnitTypeBuffer> spawnUnitTypeDynamicBuffer = AddBuffer<SpawnUnitTypeBuffer>(entity);
-            spawnUnitTypeDynamicBuffer.Add(new SpawnUnitTypeBuffer()
-            {
-                unitType = UnitTypeSO.UnitType.Soldier,
-            });
-            spawnUnitTypeDynamicBuffer.Add(new SpawnUnitTypeBuffer()
-            {
-                unitType = UnitTypeSO.UnitType.Soldier,
-            });
-            spawnUnitTypeDynamicBuffer.Add(new SpawnUnitTypeBuffer()
-            {
-                unitType = UnitTypeSO.UnitType.Scout,
-            });
+            AddBuffer<SpawnUnitTypeBuffer>(entity);
         }
     }
 }
