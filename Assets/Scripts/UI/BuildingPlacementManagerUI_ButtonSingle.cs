@@ -5,7 +5,7 @@ public class BuildingPlacementManagerUI_ButtonSingle : MonoBehaviour
 {
     [SerializeField] private Image iconImage;
     [SerializeField] private Image selectedImage;
-    
+
     private BuildingTypeSO buildingTypeSO;
 
     public void Setup(BuildingTypeSO buildingTypeSO)
@@ -16,7 +16,7 @@ public class BuildingPlacementManagerUI_ButtonSingle : MonoBehaviour
         {
             BuildingPlacementManager.Instance.SetActiveBuildingTypeSO(buildingTypeSO);
         });
-        
+
         iconImage.sprite = buildingTypeSO.sprite;
     }
 

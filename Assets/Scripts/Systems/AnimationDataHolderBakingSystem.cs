@@ -70,4 +70,13 @@ partial struct AnimationDataHolderBakingSystem : ISystem
             blobBuilder.Dispose();
         }
     }
+    
+    public void OnDestroy(ref SystemState state)
+    {
+        foreach (RefRW<AnimationDataHolder> animationDataHolder in SystemAPI.Query<
+                     RefRW<AnimationDataHolder>>())
+        {
+            animationDataHolder.ValueRW.animationDataBlobArrayBlobAssetReference.Dispose();
+        }
+    }
 }
