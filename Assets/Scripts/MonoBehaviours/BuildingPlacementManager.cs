@@ -1,3 +1,4 @@
+using System;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Physics;
@@ -7,13 +8,40 @@ using UnityEngine.EventSystems;
 
 public class BuildingPlacementManager : MonoBehaviour
 {
+    public static BuildingPlacementManager Instance { get; private set; }
+
+    public event EventHandler OnActiveBuildingTypeSOChanged;
+
     [SerializeField] private BuildingTypeSO buildingTypeSO;
+    [SerializeField] private UnityEngine.Material ghostMaterial;
+
+    private Transform ghostTransform;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Update()
     {
+        if (ghostTransform != null)
+        {
+            ghostTransform.position = MouseWorldPosition.Instance.GetPosition();
+        }
+        
         if (EventSystem.current.IsPointerOverGameObject())
         {
             return;
+        }
+
+        if (buildingTypeSO.IsNone())
+        {
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            SetActiveBuildingTypeSO(GameAssets.Instance.buildingTypeListSO.none);
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -25,8 +53,7 @@ public class BuildingPlacementManager : MonoBehaviour
 
                 EntityQuery entityQuery = entityManager.CreateEntityQuery(typeof(EntitiesReferences));
                 EntitiesReferences entitiesReferences = entityQuery.GetSingleton<EntitiesReferences>();
-
-                Entity spawnedEntity = entityManager.Instantiate(entitiesReferences.buildingTowerPrefabEntity);
+                Entity spawnedEntity = entityManager.Instantiate(buildingTypeSO.GetPrefabEntity(entitiesReferences));
 
                 entityManager.SetComponentData(spawnedEntity, LocalTransform.FromPosition(mouseWorldPosition));
             }
@@ -77,7 +104,31 @@ public class BuildingPlacementManager : MonoBehaviour
             }
         }
 
-
         return true;
+    }
+
+    public BuildingTypeSO GetActiveBuildingTypeSO()
+    {
+        return buildingTypeSO;
+    }
+
+    public void SetActiveBuildingTypeSO(BuildingTypeSO buildingTypeSO)
+    {
+        this.buildingTypeSO = buildingTypeSO;
+        if (ghostTransform != null)
+        {
+            Destroy(ghostTransform.gameObject);
+        }
+
+        if (!buildingTypeSO.IsNone())
+        {
+            ghostTransform = Instantiate(buildingTypeSO.visualPrefab);
+            foreach (MeshRenderer meshRenderer in ghostTransform.GetComponentsInChildren<MeshRenderer>())
+            {
+                meshRenderer.material = ghostMaterial;
+            }
+        }
+
+        OnActiveBuildingTypeSOChanged?.Invoke(this, EventArgs.Empty);
     }
 }

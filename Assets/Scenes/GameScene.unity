@@ -369,8 +369,8 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
+  m_Spacing: 20
+  m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
@@ -1116,7 +1116,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7010c4299601f04895d11fc48f23cde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildingTypeSO: {fileID: 11400000, guid: e2e80d04d889d2745aaca070e110bfa0, type: 2}
+  buildingTypeSO: {fileID: 11400000, guid: 3ab87e43d95014a42b201938bf28e510, type: 2}
+  ghostMaterial: {fileID: 2100000, guid: 2a7ec2724b8ac4e4b9c1d090f52daec2, type: 2}
 --- !u!1 &517936282
 GameObject:
   m_ObjectHideFlags: 0
@@ -1256,6 +1257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitTypeListSO: {fileID: 11400000, guid: 8aad00fc1fa6f9d4aad15a0dc36ae32c, type: 2}
+  buildingTypeListSO: {fileID: 11400000, guid: d92c97bb8e687c2498145910ce0e4e3e, type: 2}
 --- !u!4 &663182771
 Transform:
   m_ObjectHideFlags: 0
@@ -1625,8 +1627,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 403452421}
-  - {fileID: 1150186926}
   - {fileID: 1726968723}
+  - {fileID: 1150186926}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1853,6 +1855,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1241216665}
   - component: {fileID: 1241216666}
+  - component: {fileID: 1241216667}
   m_Layer: 5
   m_Name: BuildingButtonTemplate
   m_TagString: Untagged
@@ -1926,6 +1929,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1241216667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1241216664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 568f56aa6d39ea74aa357717b9419796, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  iconImage: {fileID: 775411213}
+  selectedImage: {fileID: 766266035}
 --- !u!1 &1262734586
 GameObject:
   m_ObjectHideFlags: 0

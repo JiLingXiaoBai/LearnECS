@@ -1,17 +1,39 @@
-    using UnityEngine;
+using Unity.Entities;
+using UnityEngine;
 
-    [CreateAssetMenu()]
-    public class BuildingTypeSO : ScriptableObject
+[CreateAssetMenu()]
+public class BuildingTypeSO : ScriptableObject
+{
+    public enum BuildingType
     {
-        public enum BuildingType
-        {
-            None,
-            ZombieSpawner,
-            Tower,
-            Barracks,
-        }
-        
-        public BuildingType buildingType;
-        public Transform prefab;
-        public float buildingDistanceMin;
+        None,
+        ZombieSpawner,
+        Tower,
+        Barracks,
     }
+
+    public BuildingType buildingType;
+    public Transform prefab;
+    public float buildingDistanceMin;
+    public bool showInBuildingPlacementManagerUI;
+    public Sprite sprite;
+    public Transform visualPrefab;
+
+    public bool IsNone()
+    {
+        return buildingType == BuildingType.None;
+    }
+
+    public Entity GetPrefabEntity(EntitiesReferences entitiesReferences)
+    {
+        switch (buildingType)
+        {
+            default:
+            case BuildingType.None:
+            case BuildingType.Tower:
+                return entitiesReferences.buildingTowerPrefabEntity;
+            case BuildingType.Barracks:
+                return entitiesReferences.buildingBarracksPrefabEntity;
+        }
+    }
+}

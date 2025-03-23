@@ -30,6 +30,11 @@ public class UnitSelectionManager : MonoBehaviour
             return;
         }
 
+        if (!BuildingPlacementManager.Instance.GetActiveBuildingTypeSO().IsNone())
+        {
+            return;
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
             selectionStartMousePosition = Input.mousePosition;
