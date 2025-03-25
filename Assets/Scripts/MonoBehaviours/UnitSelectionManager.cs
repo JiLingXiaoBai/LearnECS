@@ -169,18 +169,18 @@ public class UnitSelectionManager : MonoBehaviour
             if (!isAttackingSingleTarget)
             {
                 entityQuery = new EntityQueryBuilder(Allocator.Temp).WithAll<Selected>()
-                    .WithPresent<MoveOverride, TargetOverride>()
+                    .WithPresent<MoveOverride, TargetOverride, FlowFieldPathRequest>()
                     .Build(entityManager);
 
                 var entityArray = entityQuery.ToEntityArray(Allocator.Temp);
                 var moveOverrideArray = entityQuery.ToComponentDataArray<MoveOverride>(Allocator.Temp);
                 var targetOverrideArray = entityQuery.ToComponentDataArray<TargetOverride>(Allocator.Temp);
-
+                var flowFieldPathRequestArray = entityQuery.ToComponentDataArray<FlowFieldPathRequest>(Allocator.Temp);
                 var movePositionArray = GenerateMovePositionArray(mouseWorldPosition, entityArray.Length);
 
                 for (int i = 0; i < moveOverrideArray.Length; i++)
                 {
-                    var moveOverride = moveOverrideArray[i];
+                    MoveOverride moveOverride = moveOverrideArray[i];
                     moveOverride.targetPosition = movePositionArray[i];
                     moveOverrideArray[i] = moveOverride;
                     entityManager.SetComponentEnabled<MoveOverride>(entityArray[i], true);
@@ -188,9 +188,15 @@ public class UnitSelectionManager : MonoBehaviour
                     TargetOverride targetOverride = targetOverrideArray[i];
                     targetOverride.targetEntity = Entity.Null;
                     targetOverrideArray[i] = targetOverride;
+                    
+                    FlowFieldPathRequest flowFieldPathRequest = flowFieldPathRequestArray[i];
+                    flowFieldPathRequest.targetPosition = movePositionArray[i];
+                    flowFieldPathRequestArray[i] = flowFieldPathRequest;
+                    entityManager.SetComponentEnabled<FlowFieldPathRequest>(entityArray[i], true);
                 }
                 entityQuery.CopyFromComponentDataArray(moveOverrideArray);
                 entityQuery.CopyFromComponentDataArray(targetOverrideArray);
+                entityQuery.CopyFromComponentDataArray(flowFieldPathRequestArray);
             }
 
             // Handle Barracks Rally Position
