@@ -148,6 +148,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ZombieUnit
       objectReference: {fileID: 0}
+    - target: {fileID: 2298212221669431679, guid: c3c8a598efddc1b4fb6b1701b362301b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2736131856897326035, guid: c3c8a598efddc1b4fb6b1701b362301b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 26.95
@@ -264,6 +268,10 @@ PrefabInstance:
     - target: {fileID: 7489625056584806521, guid: 349e1d39d9eb0304c8c56338d1d04f5b, type: 3}
       propertyPath: m_Name
       value: SoldierUnit
+      objectReference: {fileID: 0}
+    - target: {fileID: 7489625056584806521, guid: 349e1d39d9eb0304c8c56338d1d04f5b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -511,7 +519,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6767833771505210069, guid: 65c9ed4baf1f88147a16165ff6ba6803, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -17.85
+      value: 7.9
       objectReference: {fileID: 0}
     - target: {fileID: 6767833771505210069, guid: 65c9ed4baf1f88147a16165ff6ba6803, type: 3}
       propertyPath: m_LocalPosition.y
@@ -519,7 +527,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6767833771505210069, guid: 65c9ed4baf1f88147a16165ff6ba6803, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 7.5
+      value: 23.8
       objectReference: {fileID: 0}
     - target: {fileID: 6767833771505210069, guid: 65c9ed4baf1f88147a16165ff6ba6803, type: 3}
       propertyPath: m_LocalRotation.w
@@ -572,6 +580,10 @@ PrefabInstance:
     - target: {fileID: 2298212221669431679, guid: c3c8a598efddc1b4fb6b1701b362301b, type: 3}
       propertyPath: m_Name
       value: ZombieUnit
+      objectReference: {fileID: 0}
+    - target: {fileID: 2298212221669431679, guid: c3c8a598efddc1b4fb6b1701b362301b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2736131856897326035, guid: c3c8a598efddc1b4fb6b1701b362301b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -706,6 +718,10 @@ PrefabInstance:
     - target: {fileID: 7489625056584806521, guid: 349e1d39d9eb0304c8c56338d1d04f5b, type: 3}
       propertyPath: m_Name
       value: SoldierUnit
+      objectReference: {fileID: 0}
+    - target: {fileID: 7489625056584806521, guid: 349e1d39d9eb0304c8c56338d1d04f5b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1026,7 +1042,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1447950497
 Transform:
   m_ObjectHideFlags: 0
@@ -1210,6 +1226,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SoldierUnit
       objectReference: {fileID: 0}
+    - target: {fileID: 7489625056584806521, guid: 349e1d39d9eb0304c8c56338d1d04f5b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1301,6 +1321,10 @@ PrefabInstance:
     - target: {fileID: 7489625056584806521, guid: 349e1d39d9eb0304c8c56338d1d04f5b, type: 3}
       propertyPath: m_Name
       value: SoldierUnit
+      objectReference: {fileID: 0}
+    - target: {fileID: 7489625056584806521, guid: 349e1d39d9eb0304c8c56338d1d04f5b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1408,6 +1432,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SoldierUnit
       objectReference: {fileID: 0}
+    - target: {fileID: 7489625056584806521, guid: 349e1d39d9eb0304c8c56338d1d04f5b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1467,6 +1495,10 @@ PrefabInstance:
     - target: {fileID: 7489625056584806521, guid: 349e1d39d9eb0304c8c56338d1d04f5b, type: 3}
       propertyPath: m_Name
       value: SoldierUnit
+      objectReference: {fileID: 0}
+    - target: {fileID: 7489625056584806521, guid: 349e1d39d9eb0304c8c56338d1d04f5b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1528,6 +1560,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SoldierUnit
       objectReference: {fileID: 0}
+    - target: {fileID: 7489625056584806521, guid: 349e1d39d9eb0304c8c56338d1d04f5b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1547,6 +1583,10 @@ PrefabInstance:
     - target: {fileID: 2298212221669431679, guid: c3c8a598efddc1b4fb6b1701b362301b, type: 3}
       propertyPath: m_Name
       value: ZombieUnit
+      objectReference: {fileID: 0}
+    - target: {fileID: 2298212221669431679, guid: c3c8a598efddc1b4fb6b1701b362301b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2736131856897326035, guid: c3c8a598efddc1b4fb6b1701b362301b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1665,6 +1705,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SoldierUnit
       objectReference: {fileID: 0}
+    - target: {fileID: 7489625056584806521, guid: 349e1d39d9eb0304c8c56338d1d04f5b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1684,6 +1728,10 @@ PrefabInstance:
     - target: {fileID: 3201506645511829289, guid: d6887850c7e29a14aab5f1fe0b3732ef, type: 3}
       propertyPath: m_Name
       value: BuildingZombieSpawner
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201506645511829289, guid: d6887850c7e29a14aab5f1fe0b3732ef, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4065585959419252117, guid: d6887850c7e29a14aab5f1fe0b3732ef, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1736,6 +1784,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 1354885767}
   - {fileID: 1758453823}
+  - {fileID: 497235084}
   - {fileID: 2002089561}
   - {fileID: 137149131}
   - {fileID: 1621306304}
@@ -1744,7 +1793,6 @@ SceneRoots:
   - {fileID: 1785742069}
   - {fileID: 1867356704}
   - {fileID: 975534381}
-  - {fileID: 497235084}
   - {fileID: 5594397562529758893}
   - {fileID: 554545703}
   - {fileID: 1984526411}

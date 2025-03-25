@@ -194,6 +194,15 @@ public partial struct GridSystem : ISystem
                 Entity gridNodeEntity = gridSystemData.gridMap.gridEntityArray[index];
                 RefRW<GridNode> gridNode = SystemAPI.GetComponentRW<GridNode>(gridNodeEntity);
                 targetGridPosition = mouseGridPosition;
+
+                foreach ((RefRW<FlowFieldFollower> flowFieldFollower,
+                             EnabledRefRW<FlowFieldFollower> flowFieldFollowerEnabled) in SystemAPI
+                             .Query<RefRW<FlowFieldFollower>, EnabledRefRW<FlowFieldFollower>>()
+                             .WithPresent<FlowFieldFollower>())
+                {
+                    flowFieldFollower.ValueRW.targetPosition = mouseWorldPosition;
+                    flowFieldFollowerEnabled.ValueRW = true;
+                }
             }
         }
 #if GRID_DEBUG
@@ -307,5 +316,15 @@ public partial struct GridSystem : ISystem
     {
         return gridPosition.x >= 0 && gridPosition.x < width &&
                gridPosition.y >= 0 && gridPosition.y < height;
+    }
+
+    public static float3 GetWorldMovementVector(float2 vector)
+    {
+        return new float3(vector.x, 0, vector.y);
+    }
+
+    public static bool IsWall(GridNode gridNode)
+    {
+        return gridNode.cost == WALL_COST;
     }
 }
