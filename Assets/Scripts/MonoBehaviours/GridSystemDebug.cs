@@ -57,6 +57,11 @@ public class GridSystemDebug : MonoBehaviour
                     gridSystemDebugSingle.SetSprite(circleSprite);
                     gridSystemDebugSingle.SetColor(Color.green);
                 }
+                else if (gridNode.cost == GridSystem.WALL_COST)
+                {
+                    gridSystemDebugSingle.SetSprite(circleSprite);
+                    gridSystemDebugSingle.SetColor(Color.black);
+                }
                 else
                 {
                     gridSystemDebugSingle.SetSprite(arrowSprite);

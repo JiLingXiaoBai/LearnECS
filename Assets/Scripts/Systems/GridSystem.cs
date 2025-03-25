@@ -3,10 +3,13 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Physics;
 using UnityEngine;
 
 public partial struct GridSystem : ISystem
 {
+    public const int WALL_COST = byte.MaxValue;
+
     public struct GridSystemData : IComponentData
     {
         public int width;
@@ -112,6 +115,32 @@ public partial struct GridSystem : ISystem
             }
         }
 
+        PhysicsWorldSingleton physicsWorldSingleton = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
+        CollisionWorld collisionWorld = physicsWorldSingleton.CollisionWorld;
+
+        NativeList<DistanceHit> distanceHitList = new NativeList<DistanceHit>(Allocator.Temp);
+        for (int x = 0; x < gridSystemData.width; x++)
+        {
+            for (int y = 0; y < gridSystemData.height; y++)
+            {
+                if (collisionWorld.OverlapSphere(
+                        GetWorldCenterPosition(x, y, gridSystemData.gridNodeSize),
+                        gridSystemData.gridNodeSize * 0.5f,
+                        ref distanceHitList,
+                        new CollisionFilter
+                        {
+                            BelongsTo = ~0u,
+                            CollidesWith = 1u << GameAssets.PATHFINDING_WALLS,
+                            GroupIndex = 0
+                        }))
+                {
+                    // There is a wall in this grid position
+                    int index = CalculateIndex(x, y, gridSystemData.width);
+                    gridNodeNativeArray[index].ValueRW.cost = WALL_COST;
+                }
+            }
+        }
+
         NativeQueue<RefRW<GridNode>> gridNodeOpenQueue = new NativeQueue<RefRW<GridNode>>(Allocator.Temp);
         RefRW<GridNode> targetGridNode = gridNodeNativeArray[CalculateIndex(targetGridPosition, gridSystemData.width)];
         gridNodeOpenQueue.Enqueue(targetGridNode);
@@ -132,6 +161,11 @@ public partial struct GridSystem : ISystem
 
             foreach (RefRW<GridNode> neighbourGridNode in neighbourGridNodeList)
             {
+                if (neighbourGridNode.ValueRO.cost == WALL_COST)
+                {
+                    // This is a wall
+                    continue;
+                }
                 byte newBestCost = (byte)(currentGridNode.ValueRO.bestCost + neighbourGridNode.ValueRO.cost);
                 if (newBestCost < neighbourGridNode.ValueRO.bestCost)
                 {
@@ -249,6 +283,15 @@ public partial struct GridSystem : ISystem
             x * gridNodeSize,
             0,
             y * gridNodeSize
+        );
+    }
+
+    public static float3 GetWorldCenterPosition(int x, int y, float gridNodeSize)
+    {
+        return new float3(
+            x * gridNodeSize + gridNodeSize * 0.5f,
+            0,
+            y * gridNodeSize + gridNodeSize * 0.5f
         );
     }
 
