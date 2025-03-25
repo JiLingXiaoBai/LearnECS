@@ -29,6 +29,9 @@ public partial struct GridSystem : ISystem
         public byte bestCost;
         public float2 vector;
     }
+
+    private int2 targetGridPosition;
+
 #if !GRID_DEBUG
     [BurstCompile]
 #endif
@@ -81,8 +84,6 @@ public partial struct GridSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         GridSystemData gridSystemData = SystemAPI.GetComponent<GridSystemData>(state.SystemHandle);
-
-        int2 targetGridPosition = new int2(2, 1);
 
         NativeArray<RefRW<GridNode>> gridNodeNativeArray =
             new NativeArray<RefRW<GridNode>>(gridSystemData.width * gridSystemData.height, Allocator.Temp);
@@ -158,7 +159,7 @@ public partial struct GridSystem : ISystem
                 int index = CalculateIndex(mouseGridPosition.x, mouseGridPosition.y, gridSystemData.width);
                 Entity gridNodeEntity = gridSystemData.gridMap.gridEntityArray[index];
                 RefRW<GridNode> gridNode = SystemAPI.GetComponentRW<GridNode>(gridNodeEntity);
-                Debug.Log(gridNode.ValueRO.vector);
+                targetGridPosition = mouseGridPosition;
             }
         }
 #if GRID_DEBUG

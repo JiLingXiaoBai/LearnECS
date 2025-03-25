@@ -2677,6 +2677,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugPrefab: {fileID: 474497082876990208, guid: f83663451d7158a499f9c4ee0e2c10f7, type: 3}
+  circleSprite: {fileID: 21300000, guid: a0e35f6b808bb7447826cc6c69ffe448, type: 3}
+  arrowSprite: {fileID: 21300000, guid: 0aac3aa6f7b72684cad566015dc5f233, type: 3}
 --- !u!4 &1618331980
 Transform:
   m_ObjectHideFlags: 0
