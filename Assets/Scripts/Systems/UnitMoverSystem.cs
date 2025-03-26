@@ -26,11 +26,11 @@ partial struct UnitMoverSystem : ISystem
                      RefRW<FlowFieldPathRequest> flowFieldPathRequest,
                      EnabledRefRW<FlowFieldPathRequest> flowFieldPathRequestEnabled,
                      EnabledRefRW<FlowFieldFollower> flowFieldFollowerEnabled,
-                     RefRW<UnitMover> unitMover) in SystemAPI
+                     RefRW<UnitMover> unitMover, Entity entity) in SystemAPI
                      .Query<RefRO<LocalTransform>, RefRW<TargetPositionPathQueued>,
                          EnabledRefRW<TargetPositionPathQueued>, RefRW<FlowFieldPathRequest>,
                          EnabledRefRW<FlowFieldPathRequest>, EnabledRefRW<FlowFieldFollower>, RefRW<UnitMover>>()
-                     .WithPresent<FlowFieldPathRequest, FlowFieldFollower>())
+                     .WithPresent<FlowFieldPathRequest, FlowFieldFollower>().WithEntityAccess())
         {
             RaycastInput raycastInput = new RaycastInput
             {
@@ -54,8 +54,22 @@ partial struct UnitMoverSystem : ISystem
             else
             {
                 // There is a wall in between
-                flowFieldPathRequest.ValueRW.targetPosition = targetPositionPathQueued.ValueRO.targetPosition;
-                flowFieldPathRequestEnabled.ValueRW = true;
+                if (SystemAPI.HasComponent<MoveOverride>(entity))
+                {
+                    SystemAPI.SetComponentEnabled<MoveOverride>(entity, false);
+                }
+                if (GridSystem.IsValidWalkableGridPosition(targetPositionPathQueued.ValueRO.targetPosition,
+                        gridSystemData))
+                {
+                    flowFieldPathRequest.ValueRW.targetPosition = targetPositionPathQueued.ValueRO.targetPosition;
+                    flowFieldPathRequestEnabled.ValueRW = true;
+                }
+                else
+                {
+                    unitMover.ValueRW.targetPosition = localTransform.ValueRO.Position;
+                    flowFieldPathRequestEnabled.ValueRW = false;
+                    flowFieldFollowerEnabled.ValueRW = false;
+                }
             }
             targetPositionPathQueuedEnabled.ValueRW = false;
         }

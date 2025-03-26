@@ -563,7 +563,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7489625056584806521, guid: 65c9ed4baf1f88147a16165ff6ba6803, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -587,7 +587,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2298212221669431679, guid: c3c8a598efddc1b4fb6b1701b362301b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2736131856897326035, guid: c3c8a598efddc1b4fb6b1701b362301b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1755,9 +1755,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2190422327362216917, guid: d6887850c7e29a14aab5f1fe0b3732ef, type: 3}
-      propertyPath: m_IsActive
-      value: 1
+    - target: {fileID: 2267729573441521009, guid: d6887850c7e29a14aab5f1fe0b3732ef, type: 3}
+      propertyPath: nearbyZombieAmountMax
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3201506645511829289, guid: d6887850c7e29a14aab5f1fe0b3732ef, type: 3}
       propertyPath: m_Name
@@ -1765,7 +1765,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3201506645511829289, guid: d6887850c7e29a14aab5f1fe0b3732ef, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4065585959419252117, guid: d6887850c7e29a14aab5f1fe0b3732ef, type: 3}
       propertyPath: m_LocalPosition.x
