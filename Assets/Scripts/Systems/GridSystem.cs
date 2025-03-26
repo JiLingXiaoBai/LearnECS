@@ -22,6 +22,7 @@ public partial struct GridSystem : ISystem
         public NativeArray<GridMap> gridMapArray;
         public int nextGridIndex;
         public NativeArray<byte> costMap;
+        public NativeArray<Entity> totalGridMapEntityArray;
     }
 
     public struct GridMap
@@ -58,6 +59,10 @@ public partial struct GridSystem : ISystem
         state.EntityManager.AddComponent<GridNode>(gridNodeEntityPrefab);
 
         NativeArray<GridMap> gridMapArray = new NativeArray<GridMap>(FLOW_FIELD_MAP_COUNT, Allocator.Persistent);
+        NativeList<Entity> totalGridMapEntityList =
+            new NativeList<Entity>(totalCount * FLOW_FIELD_MAP_COUNT, Allocator.Temp);
+
+
         for (int i = 0; i < FLOW_FIELD_MAP_COUNT; i++)
         {
             GridMap gridMap = new GridMap();
@@ -65,6 +70,7 @@ public partial struct GridSystem : ISystem
             gridMap.gridEntityArray = new NativeArray<Entity>(totalCount, Allocator.Persistent);
 
             state.EntityManager.Instantiate(gridNodeEntityPrefab, gridMap.gridEntityArray);
+            totalGridMapEntityList.AddRange(gridMap.gridEntityArray);
 
             for (int x = 0; x < width; x++)
             {
@@ -95,8 +101,9 @@ public partial struct GridSystem : ISystem
             gridNodeSize = gridNodeSize,
             gridMapArray = gridMapArray,
             costMap = new NativeArray<byte>(totalCount, Allocator.Persistent),
+            totalGridMapEntityArray = totalGridMapEntityList.ToArray(Allocator.Persistent),
         });
-
+        totalGridMapEntityList.Dispose();
         gridNodeComponentLookup = SystemAPI.GetComponentLookup<GridNode>(false);
     }
 
@@ -278,6 +285,7 @@ public partial struct GridSystem : ISystem
         }
         gridSystemData.ValueRW.gridMapArray.Dispose();
         gridSystemData.ValueRW.costMap.Dispose();
+        gridSystemData.ValueRW.totalGridMapEntityArray.Dispose();
     }
 
     public static NativeList<RefRW<GridNode>> GetNeighbourGridNodeList(RefRW<GridNode> currentGridNode,
