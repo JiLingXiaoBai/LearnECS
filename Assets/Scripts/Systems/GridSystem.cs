@@ -5,17 +5,20 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public partial struct GridSystem : ISystem
 {
     public const int WALL_COST = byte.MaxValue;
+    public const int FLOW_FIELD_MAP_COUNT = 50;
 
     public struct GridSystemData : IComponentData
     {
         public int width;
         public int height;
         public float gridNodeSize;
-        public GridMap gridMap;
+        public NativeArray<GridMap> gridMapArray;
+        public int nextGridIndex;
     }
 
     public struct GridMap
@@ -47,36 +50,41 @@ public partial struct GridSystem : ISystem
         Entity gridNodeEntityPrefab = state.EntityManager.CreateEntity();
         state.EntityManager.AddComponent<GridNode>(gridNodeEntityPrefab);
 
-        GridMap gridMap = new GridMap();
-        gridMap.gridEntityArray = new NativeArray<Entity>(totalCount, Allocator.Persistent);
-
-        state.EntityManager.Instantiate(gridNodeEntityPrefab, gridMap.gridEntityArray);
-
-        for (int x = 0; x < width; x++)
+        NativeArray<GridMap> gridMapArray = new NativeArray<GridMap>(FLOW_FIELD_MAP_COUNT, Allocator.Persistent);
+        for (int i = 0; i < FLOW_FIELD_MAP_COUNT; i++)
         {
-            for (int y = 0; y < height; y++)
-            {
-                int index = CalculateIndex(x, y, width);
-                GridNode gridNode = new GridNode
-                {
-                    index = index,
-                    x = x,
-                    y = y,
-                };
-#if GRID_DEBUG
-                state.EntityManager.SetName(gridMap.gridEntityArray[index], $"GridNode_{x}_{y}");
-#endif
-                SystemAPI.SetComponent(gridMap.gridEntityArray[index], gridNode);
-            }
-        }
+            GridMap gridMap = new GridMap();
+            gridMap.gridEntityArray = new NativeArray<Entity>(totalCount, Allocator.Persistent);
 
+            state.EntityManager.Instantiate(gridNodeEntityPrefab, gridMap.gridEntityArray);
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    int index = CalculateIndex(x, y, width);
+                    GridNode gridNode = new GridNode
+                    {
+                        index = index,
+                        x = x,
+                        y = y,
+                    };
+#if GRID_DEBUG
+                    state.EntityManager.SetName(gridMap.gridEntityArray[index], $"GridNode_{x}_{y}");
+#endif
+                    SystemAPI.SetComponent(gridMap.gridEntityArray[index], gridNode);
+                }
+            }
+
+            gridMapArray[i] = gridMap;
+        }
         state.EntityManager.AddComponent<GridSystemData>(state.SystemHandle);
         state.EntityManager.SetComponentData(state.SystemHandle, new GridSystemData
         {
             width = width,
             height = height,
             gridNodeSize = gridNodeSize,
-            gridMap = gridMap,
+            gridMapArray = gridMapArray,
         });
     }
 
@@ -99,7 +107,11 @@ public partial struct GridSystem : ISystem
                 GetGridPosition(flowFieldPathRequest.ValueRO.targetPosition, gridSystemData.gridNodeSize);
 
             flowFieldPathRequestEnabled.ValueRW = false;
+            int gridIndex = gridSystemData.nextGridIndex;
+            gridSystemData.nextGridIndex = (gridSystemData.nextGridIndex + 1) % FLOW_FIELD_MAP_COUNT;
+            SystemAPI.SetComponent(state.SystemHandle, gridSystemData);
 
+            flowFieldFollower.ValueRW.gridIndex = gridIndex;
             flowFieldFollower.ValueRW.targetPosition = flowFieldPathRequest.ValueRO.targetPosition;
             flowFieldFollowerEnabled.ValueRW = true;
 
@@ -111,7 +123,7 @@ public partial struct GridSystem : ISystem
                 for (int y = 0; y < gridSystemData.height; y++)
                 {
                     int index = CalculateIndex(x, y, gridSystemData.width);
-                    Entity gridNodeEntity = gridSystemData.gridMap.gridEntityArray[index];
+                    Entity gridNodeEntity = gridSystemData.gridMapArray[gridIndex].gridEntityArray[index];
                     RefRW<GridNode> gridNode = SystemAPI.GetComponentRW<GridNode>(gridNodeEntity);
 
                     gridNodeNativeArray[index] = gridNode;
@@ -156,7 +168,7 @@ public partial struct GridSystem : ISystem
                 }
             }
             distanceHitList.Dispose();
-            
+
             NativeQueue<RefRW<GridNode>> gridNodeOpenQueue = new NativeQueue<RefRW<GridNode>>(Allocator.Temp);
             RefRW<GridNode> targetGridNode =
                 gridNodeNativeArray[CalculateIndex(targetGridPosition, gridSystemData.width)];
@@ -208,9 +220,9 @@ public partial struct GridSystem : ISystem
 
             if (IsValidGridPosition(mouseGridPosition, gridSystemData.width, gridSystemData.height))
             {
-                int index = CalculateIndex(mouseGridPosition.x, mouseGridPosition.y, gridSystemData.width);
-                Entity gridNodeEntity = gridSystemData.gridMap.gridEntityArray[index];
-                RefRW<GridNode> gridNode = SystemAPI.GetComponentRW<GridNode>(gridNodeEntity);
+                // int index = CalculateIndex(mouseGridPosition.x, mouseGridPosition.y, gridSystemData.width);
+                // Entity gridNodeEntity = gridSystemData.gridMap.gridEntityArray[index];
+                // RefRW<GridNode> gridNode = SystemAPI.GetComponentRW<GridNode>(gridNodeEntity);
             }
         }
 #if GRID_DEBUG
@@ -223,7 +235,11 @@ public partial struct GridSystem : ISystem
     public void OnDestroy(ref SystemState state)
     {
         RefRW<GridSystemData> gridSystemData = SystemAPI.GetComponentRW<GridSystemData>(state.SystemHandle);
-        gridSystemData.ValueRW.gridMap.gridEntityArray.Dispose();
+        for (int i = 0; i < FLOW_FIELD_MAP_COUNT; i++)
+        {
+            gridSystemData.ValueRW.gridMapArray[i].gridEntityArray.Dispose();
+        }
+        gridSystemData.ValueRW.gridMapArray.Dispose();
     }
 
     public static NativeList<RefRW<GridNode>> GetNeighbourGridNodeList(RefRW<GridNode> currentGridNode,

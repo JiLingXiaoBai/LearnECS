@@ -49,7 +49,13 @@ public class GridSystemDebug : MonoBehaviour
                 GridSystemDebugSingle gridSystemDebugSingle = gridSystemDebugSingleArray[x, y];
                 EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
                 int index = GridSystem.CalculateIndex(x, y, gridSystemData.width);
-                Entity gridNodeEntity = gridSystemData.gridMap.gridEntityArray[index];
+                // xiaobai todo 有坑，将nextGridIndex的逻辑换成currentGridIndex比较好吧？
+                int gridIndex = gridSystemData.nextGridIndex - 1;
+                if (gridIndex < 0)
+                {
+                    gridIndex = 0;
+                }
+                Entity gridNodeEntity = gridSystemData.gridMapArray[gridIndex].gridEntityArray[index];
                 GridSystem.GridNode gridNode = entityManager.GetComponentData<GridSystem.GridNode>(gridNodeEntity);
                 // gridSystemDebugSingle.SetColor(gridNode.data == 0 ? Color.white : Color.blue);
                 if (gridNode.cost == 0)
