@@ -1,5 +1,7 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.Physics;
@@ -8,71 +10,101 @@ partial struct UnitMoverSystem : ISystem
 {
     public const float REACHED_TARGET_POSITION_DISTANCE_SQ = 2f;
 
+    public ComponentLookup<TargetPositionPathQueued> targetPositionPathQueuedComponentLookup;
+    public ComponentLookup<FlowFieldPathRequest> flowFieldPathRequestComponentLookup;
+    public ComponentLookup<FlowFieldFollower> flowFieldFollowerComponentLookup;
+    public ComponentLookup<MoveOverride> moveOverrideComponentLookup;
+
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridSystem.GridSystemData>();
+        targetPositionPathQueuedComponentLookup = SystemAPI.GetComponentLookup<TargetPositionPathQueued>(false);
+        flowFieldPathRequestComponentLookup = SystemAPI.GetComponentLookup<FlowFieldPathRequest>(false);
+        flowFieldFollowerComponentLookup = SystemAPI.GetComponentLookup<FlowFieldFollower>(false);
+        moveOverrideComponentLookup = SystemAPI.GetComponentLookup<MoveOverride>(false);
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         GridSystem.GridSystemData gridSystemData = SystemAPI.GetSingleton<GridSystem.GridSystemData>();
+
+        targetPositionPathQueuedComponentLookup.Update(ref state);
+        flowFieldPathRequestComponentLookup.Update(ref state);
+        flowFieldFollowerComponentLookup.Update(ref state);
+        moveOverrideComponentLookup.Update(ref state);
+
         PhysicsWorldSingleton physicsWorldSingleton = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
         CollisionWorld collisionWorld = physicsWorldSingleton.CollisionWorld;
 
-        foreach ((RefRO<LocalTransform> localTransform, RefRW<TargetPositionPathQueued> targetPositionPathQueued,
-                     EnabledRefRW<TargetPositionPathQueued> targetPositionPathQueuedEnabled,
-                     RefRW<FlowFieldPathRequest> flowFieldPathRequest,
-                     EnabledRefRW<FlowFieldPathRequest> flowFieldPathRequestEnabled,
-                     EnabledRefRW<FlowFieldFollower> flowFieldFollowerEnabled,
-                     RefRW<UnitMover> unitMover, Entity entity) in SystemAPI
-                     .Query<RefRO<LocalTransform>, RefRW<TargetPositionPathQueued>,
-                         EnabledRefRW<TargetPositionPathQueued>, RefRW<FlowFieldPathRequest>,
-                         EnabledRefRW<FlowFieldPathRequest>, EnabledRefRW<FlowFieldFollower>, RefRW<UnitMover>>()
-                     .WithPresent<FlowFieldPathRequest, FlowFieldFollower>().WithEntityAccess())
+        TargetPositionPathQueuedJob targetPositionPathQueuedJob = new TargetPositionPathQueuedJob
         {
-            RaycastInput raycastInput = new RaycastInput
-            {
-                Start = localTransform.ValueRO.Position,
-                End = targetPositionPathQueued.ValueRO.targetPosition,
-                Filter = new CollisionFilter
-                {
-                    BelongsTo = ~0u,
-                    CollidesWith = 1u << GameAssets.PATHFINDING_WALLS,
-                    GroupIndex = 0
-                }
-            };
+            collisionWorld = collisionWorld,
+            gridNodeSize = gridSystemData.gridNodeSize,
+            width = gridSystemData.width,
+            height = gridSystemData.height,
+            costMap = gridSystemData.costMap,
+            flowFieldFollowerComponentLookup = flowFieldFollowerComponentLookup,
+            flowFieldPathRequestComponentLookup = flowFieldPathRequestComponentLookup,
+            moveOverrideComponentLookup = moveOverrideComponentLookup,
+            targetPositionPathQueuedComponentLookup = targetPositionPathQueuedComponentLookup,
+        };
+        JobHandle targetPositionPathQueuedJobHandle = targetPositionPathQueuedJob.ScheduleParallel(state.Dependency);
+        targetPositionPathQueuedJobHandle.Complete();
 
-            if (!collisionWorld.CastRay(raycastInput))
-            {
-                // Did not hit anything, no wall in between
-                unitMover.ValueRW.targetPosition = targetPositionPathQueued.ValueRO.targetPosition;
-                flowFieldPathRequestEnabled.ValueRW = false;
-                flowFieldFollowerEnabled.ValueRW = false;
-            }
-            else
-            {
-                // There is a wall in between
-                if (SystemAPI.HasComponent<MoveOverride>(entity))
-                {
-                    SystemAPI.SetComponentEnabled<MoveOverride>(entity, false);
-                }
-                if (GridSystem.IsValidWalkableGridPosition(targetPositionPathQueued.ValueRO.targetPosition,
-                        gridSystemData))
-                {
-                    flowFieldPathRequest.ValueRW.targetPosition = targetPositionPathQueued.ValueRO.targetPosition;
-                    flowFieldPathRequestEnabled.ValueRW = true;
-                }
-                else
-                {
-                    unitMover.ValueRW.targetPosition = localTransform.ValueRO.Position;
-                    flowFieldPathRequestEnabled.ValueRW = false;
-                    flowFieldFollowerEnabled.ValueRW = false;
-                }
-            }
-            targetPositionPathQueuedEnabled.ValueRW = false;
-        }
+        // foreach ((RefRO<LocalTransform> localTransform, RefRW<TargetPositionPathQueued> targetPositionPathQueued,
+        //              EnabledRefRW<TargetPositionPathQueued> targetPositionPathQueuedEnabled,
+        //              RefRW<FlowFieldPathRequest> flowFieldPathRequest,
+        //              EnabledRefRW<FlowFieldPathRequest> flowFieldPathRequestEnabled,
+        //              EnabledRefRW<FlowFieldFollower> flowFieldFollowerEnabled,
+        //              RefRW<UnitMover> unitMover, Entity entity) in SystemAPI
+        //              .Query<RefRO<LocalTransform>, RefRW<TargetPositionPathQueued>,
+        //                  EnabledRefRW<TargetPositionPathQueued>, RefRW<FlowFieldPathRequest>,
+        //                  EnabledRefRW<FlowFieldPathRequest>, EnabledRefRW<FlowFieldFollower>, RefRW<UnitMover>>()
+        //              .WithPresent<FlowFieldPathRequest, FlowFieldFollower>().WithEntityAccess())
+        // {
+        //     RaycastInput raycastInput = new RaycastInput
+        //     {
+        //         Start = localTransform.ValueRO.Position,
+        //         End = targetPositionPathQueued.ValueRO.targetPosition,
+        //         Filter = new CollisionFilter
+        //         {
+        //             BelongsTo = ~0u,
+        //             CollidesWith = 1u << GameAssets.PATHFINDING_WALLS,
+        //             GroupIndex = 0
+        //         }
+        //     };
+        //
+        //     if (!collisionWorld.CastRay(raycastInput))
+        //     {
+        //         // Did not hit anything, no wall in between
+        //         unitMover.ValueRW.targetPosition = targetPositionPathQueued.ValueRO.targetPosition;
+        //         flowFieldPathRequestEnabled.ValueRW = false;
+        //         flowFieldFollowerEnabled.ValueRW = false;
+        //     }
+        //     else
+        //     {
+        //         // There is a wall in between
+        //         if (SystemAPI.HasComponent<MoveOverride>(entity))
+        //         {
+        //             SystemAPI.SetComponentEnabled<MoveOverride>(entity, false);
+        //         }
+        //         if (GridSystem.IsValidWalkableGridPosition(targetPositionPathQueued.ValueRO.targetPosition,
+        //                 gridSystemData))
+        //         {
+        //             flowFieldPathRequest.ValueRW.targetPosition = targetPositionPathQueued.ValueRO.targetPosition;
+        //             flowFieldPathRequestEnabled.ValueRW = true;
+        //         }
+        //         else
+        //         {
+        //             unitMover.ValueRW.targetPosition = localTransform.ValueRO.Position;
+        //             flowFieldPathRequestEnabled.ValueRW = false;
+        //             flowFieldFollowerEnabled.ValueRW = false;
+        //         }
+        //     }
+        //     targetPositionPathQueuedEnabled.ValueRW = false;
+        // }
 
         foreach ((RefRO<LocalTransform> localTransform, RefRW<FlowFieldFollower> flowFieldFollower,
                      EnabledRefRW<FlowFieldFollower> flowFieldFollowerEnabled, RefRW<UnitMover> unitMover) in SystemAPI
@@ -164,5 +196,71 @@ public partial struct UnitMoverJob : IJobEntity
                 deltaTime * unitMover.rotationSpeed);
         physicsVelocity.Linear = moveDirection * unitMover.moveSpeed;
         physicsVelocity.Angular = float3.zero;
+    }
+}
+
+[BurstCompile]
+[WithAll(typeof(TargetPositionPathQueued))]
+public partial struct TargetPositionPathQueuedJob : IJobEntity
+{
+    [NativeDisableParallelForRestriction]
+    public ComponentLookup<TargetPositionPathQueued> targetPositionPathQueuedComponentLookup;
+
+    [NativeDisableParallelForRestriction]
+    public ComponentLookup<FlowFieldPathRequest> flowFieldPathRequestComponentLookup;
+
+    [NativeDisableParallelForRestriction] public ComponentLookup<FlowFieldFollower> flowFieldFollowerComponentLookup;
+    [NativeDisableParallelForRestriction] public ComponentLookup<MoveOverride> moveOverrideComponentLookup;
+
+    [ReadOnly] public CollisionWorld collisionWorld;
+    [ReadOnly] public int width;
+    [ReadOnly] public int height;
+    [ReadOnly] public NativeArray<byte> costMap;
+    [ReadOnly] public float gridNodeSize;
+
+    public void Execute(in LocalTransform localTransform, ref UnitMover unitMover, Entity entity)
+    {
+        RaycastInput raycastInput = new RaycastInput
+        {
+            Start = localTransform.Position,
+            End = targetPositionPathQueuedComponentLookup[entity].targetPosition,
+            Filter = new CollisionFilter
+            {
+                BelongsTo = ~0u,
+                CollidesWith = 1u << GameAssets.PATHFINDING_WALLS,
+                GroupIndex = 0
+            }
+        };
+
+        if (!collisionWorld.CastRay(raycastInput))
+        {
+            // Did not hit anything, no wall in between
+            unitMover.targetPosition = targetPositionPathQueuedComponentLookup[entity].targetPosition;
+            flowFieldPathRequestComponentLookup.SetComponentEnabled(entity, false);
+            flowFieldFollowerComponentLookup.SetComponentEnabled(entity, false);
+        }
+        else
+        {
+            // There is a wall in between
+            if (moveOverrideComponentLookup.HasComponent(entity))
+            {
+                moveOverrideComponentLookup.SetComponentEnabled(entity, false);
+            }
+            if (GridSystem.IsValidWalkableGridPosition(targetPositionPathQueuedComponentLookup[entity].targetPosition,
+                    width, height, costMap, gridNodeSize))
+            {
+                FlowFieldPathRequest flowFieldPathRequest = flowFieldPathRequestComponentLookup[entity];
+                flowFieldPathRequest.targetPosition = targetPositionPathQueuedComponentLookup[entity].targetPosition;
+                flowFieldPathRequestComponentLookup[entity] = flowFieldPathRequest;
+                flowFieldPathRequestComponentLookup.SetComponentEnabled(entity, true);
+            }
+            else
+            {
+                unitMover.targetPosition = localTransform.Position;
+                flowFieldPathRequestComponentLookup.SetComponentEnabled(entity, false);
+                flowFieldFollowerComponentLookup.SetComponentEnabled(entity, false);
+            }
+        }
+        targetPositionPathQueuedComponentLookup.SetComponentEnabled(entity, false);
     }
 }
