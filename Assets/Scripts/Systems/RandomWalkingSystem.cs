@@ -8,8 +8,14 @@ partial struct RandomWalkingSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        foreach ((RefRW<RandomWalking> randomWalking, RefRW<UnitMover> unitMover, RefRO<LocalTransform> localTransform)
-                 in SystemAPI.Query<RefRW<RandomWalking>, RefRW<UnitMover>, RefRO<LocalTransform>>())
+        foreach ((RefRW<RandomWalking> randomWalking,
+                     RefRW<TargetPositionPathQueued> targetPositionPathQueued,
+                     EnabledRefRW<TargetPositionPathQueued> targetPositionPathQueuedEnabled,
+                     RefRO<LocalTransform> localTransform)
+                 in SystemAPI
+                     .Query<RefRW<RandomWalking>, RefRW<TargetPositionPathQueued>,
+                         EnabledRefRW<TargetPositionPathQueued>, RefRO<LocalTransform>>()
+                     .WithPresent<TargetPositionPathQueued>())
         {
             if (math.distancesq(localTransform.ValueRO.Position, randomWalking.ValueRO.targetPosition) <
                 UnitMoverSystem.REACHED_TARGET_POSITION_DISTANCE_SQ)
@@ -20,14 +26,14 @@ partial struct RandomWalkingSystem : ISystem
 
                 randomWalking.ValueRW.targetPosition = randomWalking.ValueRO.originPosition + randomDirection *
                     random.NextFloat(randomWalking.ValueRO.distanceMin, randomWalking.ValueRO.distanceMax);
-                
+
                 randomWalking.ValueRW.random = random;
             }
             else
             {
-                unitMover.ValueRW.targetPosition = randomWalking.ValueRO.targetPosition;
+                targetPositionPathQueued.ValueRW.targetPosition = randomWalking.ValueRO.targetPosition;
+                targetPositionPathQueuedEnabled.ValueRW = true;
             }
-            
         }
     }
 }

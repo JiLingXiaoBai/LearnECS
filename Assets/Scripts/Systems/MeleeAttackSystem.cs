@@ -15,9 +15,12 @@ partial struct MeleeAttackSystem : ISystem
         NativeList<RaycastHit> raycastHitList = new NativeList<RaycastHit>(Allocator.Temp);
 
         foreach ((RefRO<LocalTransform> localTransform, RefRW<MeleeAttack> meleeAttack, RefRO<Target> target,
-                     RefRW<UnitMover> unitMover) in SystemAPI
-                     .Query<RefRO<LocalTransform>, RefRW<MeleeAttack>, RefRO<Target>, RefRW<UnitMover>>()
-                     .WithDisabled<MoveOverride>())
+                     RefRW<TargetPositionPathQueued> targetPositionPathQueued,
+                     EnabledRefRW<TargetPositionPathQueued> targetPositionPathQueuedEnabled
+                 ) in SystemAPI
+                     .Query<RefRO<LocalTransform>, RefRW<MeleeAttack>, RefRO<Target>, RefRW<TargetPositionPathQueued>,
+                         EnabledRefRW<TargetPositionPathQueued>>()
+                     .WithDisabled<MoveOverride>().WithPresent<TargetPositionPathQueued>())
         {
             if (target.ValueRO.targetEntity == Entity.Null)
             {
@@ -61,12 +64,15 @@ partial struct MeleeAttackSystem : ISystem
             if (!isCloseEnoughToAttack && !isTouchingTarget)
             {
                 // Target is too far
-                unitMover.ValueRW.targetPosition = targetLocalTransform.Position;
+                targetPositionPathQueued.ValueRW.targetPosition = targetLocalTransform.Position;
+                targetPositionPathQueuedEnabled.ValueRW = true;
             }
             else
             {
                 // Target is close enough to attack
-                unitMover.ValueRW.targetPosition = localTransform.ValueRO.Position;
+                targetPositionPathQueued.ValueRW.targetPosition = localTransform.ValueRO.Position;
+                targetPositionPathQueuedEnabled.ValueRW = true;
+                
                 meleeAttack.ValueRW.timer -= SystemAPI.Time.DeltaTime;
                 if (meleeAttack.ValueRO.timer > 0)
                 {
@@ -76,7 +82,7 @@ partial struct MeleeAttackSystem : ISystem
                 RefRW<Health> targetHealth = SystemAPI.GetComponentRW<Health>(target.ValueRO.targetEntity);
                 targetHealth.ValueRW.healthAmount -= meleeAttack.ValueRO.damageAmount;
                 targetHealth.ValueRW.onHealthChanged = true;
-                
+
                 meleeAttack.ValueRW.onAttacked = true;
             }
         }

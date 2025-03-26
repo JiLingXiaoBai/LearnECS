@@ -17,9 +17,12 @@ partial struct ShootAttackSystem : ISystem
         EntitiesReferences entitiesReferences = SystemAPI.GetSingleton<EntitiesReferences>();
 
         foreach ((RefRW<LocalTransform> localTransform, RefRW<ShootAttack> shootAttack,
+                     RefRW<TargetPositionPathQueued> targetPositionPathQueued,
+                     EnabledRefRW<TargetPositionPathQueued> targetPositionPathQueuedEnabled,
                      RefRO<Target> target, RefRW<UnitMover> unitMover, Entity entity) in SystemAPI
-                     .Query<RefRW<LocalTransform>, RefRW<ShootAttack>, RefRO<Target>, RefRW<UnitMover>>()
-                     .WithDisabled<MoveOverride>().WithEntityAccess())
+                     .Query<RefRW<LocalTransform>, RefRW<ShootAttack>, RefRW<TargetPositionPathQueued>,
+                         EnabledRefRW<TargetPositionPathQueued>, RefRO<Target>, RefRW<UnitMover>>()
+                     .WithDisabled<MoveOverride>().WithPresent<TargetPositionPathQueued>().WithEntityAccess())
         {
             if (target.ValueRO.targetEntity == Entity.Null)
             {
@@ -32,13 +35,15 @@ partial struct ShootAttackSystem : ISystem
                 math.pow(shootAttack.ValueRO.attackDistance, 2))
             {
                 //Not close enough, start moving towards target
-                unitMover.ValueRW.targetPosition = targetLocalTransform.Position;
+                targetPositionPathQueued.ValueRW.targetPosition = targetLocalTransform.Position;
+                targetPositionPathQueuedEnabled.ValueRW = true;
                 continue;
             }
             else
             {
                 //Close enough, stop moving and attack
-                unitMover.ValueRW.targetPosition = localTransform.ValueRO.Position;
+                targetPositionPathQueued.ValueRW.targetPosition = localTransform.ValueRO.Position;
+                targetPositionPathQueuedEnabled.ValueRW = true;
             }
 
             float3 aimDirection = targetLocalTransform.Position - localTransform.ValueRO.Position;
