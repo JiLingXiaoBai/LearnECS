@@ -1134,6 +1134,12 @@ MonoBehaviour:
   buildingIronHarvesterPrefabGameObject: {fileID: 4024349772091594361, guid: aee949e4ba5c91c46b349d6451b0c1ca, type: 3}
   buildingGoldHarvesterPrefabGameObject: {fileID: 3812296065235393055, guid: 96ea556c005f88843b5fd436fc971b35, type: 3}
   buildingOilHarvesterPrefabGameObject: {fileID: 2928778780320191729, guid: 933f6efe828565c4fa04609876ebca22, type: 3}
+  buildingTowerVisualPrefabGameObject: {fileID: 5799947214760584452, guid: 4dbe3453c2a716743b0db56f6ced9c3b, type: 3}
+  buildingBarracksVisualPrefabGameObject: {fileID: 715989064538214012, guid: d5f97a2fd6630b34982aaca8876d69ef, type: 3}
+  buildingIronHarvesterVisualPrefabGameObject: {fileID: 184314028090552627, guid: 986eac81f4856df47bacc9ed8bf0ea6d, type: 3}
+  buildingGoldHarvesterVisualPrefabGameObject: {fileID: 4499998760003975059, guid: d92e1b4fc516b61468081516cc5c14f1, type: 3}
+  buildingOilHarvesterVisualPrefabGameObject: {fileID: 4785703203425898357, guid: 2e71adb493af6ac46980b7cb9775dd45, type: 3}
+  buildingConstructionPrefabGameObject: {fileID: 1977230551525772340, guid: e69677379d74a1341b2a2c376afb5bd8, type: 3}
 --- !u!1 &1359838722 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7489625056584806521, guid: 349e1d39d9eb0304c8c56338d1d04f5b, type: 3}

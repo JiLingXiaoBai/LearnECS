@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Tower
   m_EditorClassIdentifier: 
   buildingType: 2
+  buildingConstructionTimerMax: 10
   prefab: {fileID: 8472285574612371120, guid: 8e17273cef37215439a23272dbf480ca, type: 3}
   buildingDistanceMin: 10
   showInBuildingPlacementManagerUI: 1

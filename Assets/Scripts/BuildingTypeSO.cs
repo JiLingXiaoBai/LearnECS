@@ -17,6 +17,7 @@ public class BuildingTypeSO : ScriptableObject
     }
 
     public BuildingType buildingType;
+    public float buildingConstructionTimerMax;
     public Transform prefab;
     public float buildingDistanceMin;
     public bool showInBuildingPlacementManagerUI;
@@ -45,6 +46,25 @@ public class BuildingTypeSO : ScriptableObject
                 return entitiesReferences.buildingGoldHarvesterPrefabEntity;
             case BuildingType.OilHarvester:
                 return entitiesReferences.buildingOilHarvesterPrefabEntity;
+        }
+    }
+
+    public Entity GetVisualPrefabEntity(EntitiesReferences entitiesReferences)
+    {
+        switch (buildingType)
+        {
+            default:
+            case BuildingType.None:
+            case BuildingType.Tower:
+                return entitiesReferences.buildingTowerVisualPrefabEntity;
+            case BuildingType.Barracks:
+                return entitiesReferences.buildingBarracksVisualPrefabEntity;
+            case BuildingType.IronHarvester:
+                return entitiesReferences.buildingIronHarvesterVisualPrefabEntity;
+            case BuildingType.GoldHarvester:
+                return entitiesReferences.buildingGoldHarvesterVisualPrefabEntity;
+            case BuildingType.OilHarvester:
+                return entitiesReferences.buildingOilHarvesterVisualPrefabEntity;
         }
     }
 }

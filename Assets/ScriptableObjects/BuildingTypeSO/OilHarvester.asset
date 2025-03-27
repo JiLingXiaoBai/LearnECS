@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: OilHarvester
   m_EditorClassIdentifier: 
   buildingType: 7
+  buildingConstructionTimerMax: 10
   prefab: {fileID: 2097572562434860445, guid: 933f6efe828565c4fa04609876ebca22, type: 3}
   buildingDistanceMin: 10
   showInBuildingPlacementManagerUI: 1

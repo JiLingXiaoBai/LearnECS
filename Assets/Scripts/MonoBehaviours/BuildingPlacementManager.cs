@@ -56,10 +56,28 @@ public class BuildingPlacementManager : MonoBehaviour
 
                     EntityQuery entityQuery = entityManager.CreateEntityQuery(typeof(EntitiesReferences));
                     EntitiesReferences entitiesReferences = entityQuery.GetSingleton<EntitiesReferences>();
-                    Entity spawnedEntity =
-                        entityManager.Instantiate(buildingTypeSO.GetPrefabEntity(entitiesReferences));
 
-                    entityManager.SetComponentData(spawnedEntity, LocalTransform.FromPosition(mouseWorldPosition));
+                    // Entity spawnedEntity =
+                    //     entityManager.Instantiate(buildingTypeSO.GetPrefabEntity(entitiesReferences));
+                    //
+                    // entityManager.SetComponentData(spawnedEntity, LocalTransform.FromPosition(mouseWorldPosition));
+                    Entity buildingConstructionVisualEntity =
+                        entityManager.Instantiate(buildingTypeSO.GetVisualPrefabEntity(entitiesReferences));
+                    entityManager.SetComponentData(buildingConstructionVisualEntity,
+                        LocalTransform.FromPosition(mouseWorldPosition));
+
+                    Entity buildingConstructionEntity =
+                        entityManager.Instantiate(entitiesReferences.buildingConstructionPrefabEntity);
+                    entityManager.SetComponentData(buildingConstructionEntity,
+                        LocalTransform.FromPosition(mouseWorldPosition));
+                    entityManager.SetComponentData(buildingConstructionEntity, new BuildingConstruction()
+                    {
+                        buildingType = buildingTypeSO.buildingType,
+                        constructionTimer = 0f,
+                        constructionTimerMax = buildingTypeSO.buildingConstructionTimerMax,
+                        finalPrefabEntity = buildingTypeSO.GetPrefabEntity(entitiesReferences),
+                        visualEntity = buildingConstructionVisualEntity
+                    });
                 }
             }
         }
@@ -77,7 +95,7 @@ public class BuildingPlacementManager : MonoBehaviour
         CollisionFilter collisionFilter = new CollisionFilter()
         {
             BelongsTo = ~0u,
-        CollidesWith = 1u << GameAssets.BUILDINGS_LAYER | 1u << GameAssets.DEFAULT_LAYER,
+            CollidesWith = 1u << GameAssets.BUILDINGS_LAYER | 1u << GameAssets.DEFAULT_LAYER,
             GroupIndex = 0,
         };
 
