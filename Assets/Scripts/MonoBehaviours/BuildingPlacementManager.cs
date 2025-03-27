@@ -28,7 +28,7 @@ public class BuildingPlacementManager : MonoBehaviour
         {
             ghostTransform.position = MouseWorldPosition.Instance.GetPosition();
         }
-        
+
         if (EventSystem.current.IsPointerOverGameObject())
         {
             return;
@@ -46,16 +46,21 @@ public class BuildingPlacementManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (CanPlaceBuilding())
+            if (ResourceManager.Instance.CanSpendResourceAmount(buildingTypeSO.buildCostResourceAmountArray))
             {
-                Vector3 mouseWorldPosition = MouseWorldPosition.Instance.GetPosition();
-                EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+                if (CanPlaceBuilding())
+                {
+                    ResourceManager.Instance.SpendResourceAmount(buildingTypeSO.buildCostResourceAmountArray);
+                    Vector3 mouseWorldPosition = MouseWorldPosition.Instance.GetPosition();
+                    EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-                EntityQuery entityQuery = entityManager.CreateEntityQuery(typeof(EntitiesReferences));
-                EntitiesReferences entitiesReferences = entityQuery.GetSingleton<EntitiesReferences>();
-                Entity spawnedEntity = entityManager.Instantiate(buildingTypeSO.GetPrefabEntity(entitiesReferences));
+                    EntityQuery entityQuery = entityManager.CreateEntityQuery(typeof(EntitiesReferences));
+                    EntitiesReferences entitiesReferences = entityQuery.GetSingleton<EntitiesReferences>();
+                    Entity spawnedEntity =
+                        entityManager.Instantiate(buildingTypeSO.GetPrefabEntity(entitiesReferences));
 
-                entityManager.SetComponentData(spawnedEntity, LocalTransform.FromPosition(mouseWorldPosition));
+                    entityManager.SetComponentData(spawnedEntity, LocalTransform.FromPosition(mouseWorldPosition));
+                }
             }
         }
     }
@@ -72,7 +77,7 @@ public class BuildingPlacementManager : MonoBehaviour
         CollisionFilter collisionFilter = new CollisionFilter()
         {
             BelongsTo = ~0u,
-            CollidesWith = 1u << GameAssets.BUILDINGS_LAYER,
+        CollidesWith = 1u << GameAssets.BUILDINGS_LAYER | 1u << GameAssets.DEFAULT_LAYER,
             GroupIndex = 0,
         };
 
@@ -101,6 +106,36 @@ public class BuildingPlacementManager : MonoBehaviour
                         return false;
                     }
                 }
+            }
+        }
+
+        if (buildingTypeSO is BuildingResourceHarversterTypeSO buildingResourceHarversterTypeSO)
+        {
+            bool hasValidNearbyResourceNodes = false;
+            distanceHitList.Clear();
+            if (collisionWorld.OverlapSphere(mouseWorldPosition, buildingResourceHarversterTypeSO.harvestDistance,
+                    ref distanceHitList,
+                    collisionFilter))
+            {
+                foreach (DistanceHit distanceHit in distanceHitList)
+                {
+                    if (entityManager.HasComponent<ResourceTypeSOHolder>(distanceHit.Entity))
+                    {
+                        ResourceTypeSOHolder resourceTypeSOHolder =
+                            entityManager.GetComponentData<ResourceTypeSOHolder>(distanceHit.Entity);
+
+                        if (resourceTypeSOHolder.resourceType ==
+                            buildingResourceHarversterTypeSO.harvestableResourceType)
+                        {
+                            hasValidNearbyResourceNodes = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!hasValidNearbyResourceNodes)
+            {
+                return false;
             }
         }
 

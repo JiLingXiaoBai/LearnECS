@@ -22,6 +22,7 @@ public class BuildingTypeSO : ScriptableObject
     public bool showInBuildingPlacementManagerUI;
     public Sprite sprite;
     public Transform visualPrefab;
+    public ResourceAmount[] buildCostResourceAmountArray;
 
     public bool IsNone()
     {
@@ -38,6 +39,12 @@ public class BuildingTypeSO : ScriptableObject
                 return entitiesReferences.buildingTowerPrefabEntity;
             case BuildingType.Barracks:
                 return entitiesReferences.buildingBarracksPrefabEntity;
+            case BuildingType.IronHarvester:
+                return entitiesReferences.buildingIronHarvesterPrefabEntity;
+            case BuildingType.GoldHarvester:
+                return entitiesReferences.buildingGoldHarvesterPrefabEntity;
+            case BuildingType.OilHarvester:
+                return entitiesReferences.buildingOilHarvesterPrefabEntity;
         }
     }
 }

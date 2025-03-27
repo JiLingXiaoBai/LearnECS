@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,18 @@ public class ResourceManagerUI : MonoBehaviour
     private void Awake()
     {
         template.gameObject.SetActive(false);
+    }
+
+    private void Start()
+    {
+        ResourceManager.Instance.OnResourceAmountChanged += ResourceManager_OnResourceAmountChanged;
+        Setup();
+        UpdateAmounts();
+    }
+
+    private void ResourceManager_OnResourceAmountChanged(object sender, EventArgs e)
+    {
+        UpdateAmounts();
     }
 
     private void Setup()

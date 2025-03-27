@@ -18,6 +18,12 @@ public class BuildingBarracksUI : MonoBehaviour
     {
         soldierButton.onClick.AddListener(() =>
         {
+            UnitTypeSO unitTypeSO = GameAssets.Instance.unitTypeListSO.GetUnitTypeSO(UnitTypeSO.UnitType.Soldier);
+            if (!ResourceManager.Instance.CanSpendResourceAmount(unitTypeSO.spawnCostResourceAmountArray))
+            {
+                return;
+            }
+            ResourceManager.Instance.SpendResourceAmount(unitTypeSO.spawnCostResourceAmountArray);
             entityManager.SetComponentData(buildingBarracksEntity, new BuildingBarracksUnitEnqueue
             {
                 unitType = UnitTypeSO.UnitType.Soldier,
@@ -26,6 +32,12 @@ public class BuildingBarracksUI : MonoBehaviour
         });
         scoutButton.onClick.AddListener(() =>
         {
+            UnitTypeSO unitTypeSO = GameAssets.Instance.unitTypeListSO.GetUnitTypeSO(UnitTypeSO.UnitType.Scout);
+            if (!ResourceManager.Instance.CanSpendResourceAmount(unitTypeSO.spawnCostResourceAmountArray))
+            {
+                return;
+            }
+            ResourceManager.Instance.SpendResourceAmount(unitTypeSO.spawnCostResourceAmountArray);
             entityManager.SetComponentData(buildingBarracksEntity, new BuildingBarracksUnitEnqueue
             {
                 unitType = UnitTypeSO.UnitType.Scout,
@@ -116,7 +128,7 @@ public class BuildingBarracksUI : MonoBehaviour
         {
             RectTransform unitQueueRectTransform = Instantiate(unitQueueTemplate, unitQueueContainer);
             unitQueueRectTransform.gameObject.SetActive(true);
-            
+
             UnitTypeSO unitTypeSO = GameAssets.Instance.unitTypeListSO.GetUnitTypeSO(spawnUnityTypeBuffer.unitType);
             unitQueueRectTransform.GetComponent<Image>().sprite = unitTypeSO.sprite;
         }
