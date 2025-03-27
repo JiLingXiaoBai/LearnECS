@@ -11,6 +11,9 @@ public class BuildingTypeSO : ScriptableObject
         Tower,
         Barracks,
         HQ,
+        GoldHarvester,
+        IronHarvester,
+        OilHarvester,
     }
 
     public BuildingType buildingType;
