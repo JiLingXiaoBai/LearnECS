@@ -27,7 +27,7 @@ partial struct ResetEventsSystem : ISystem
             Health hqHealth = SystemAPI.GetComponent<Health>(SystemAPI.GetSingletonEntity<BuildingHQ>());
             if (hqHealth.onDead)
             {
-                DOTSEventsManager.Instance.TriggerOnHQDead();
+                DOTSEventsManager.Instance?.TriggerOnHQDead();
             }
         }
         jobHandleNativeArray[0] = new ResetSelectedEventsJob().ScheduleParallel(state.Dependency);
@@ -40,7 +40,7 @@ partial struct ResetEventsSystem : ISystem
             onHealthDeadEntityList = onHealthDeadEntityList.AsParallelWriter(),
         }.ScheduleParallel(state.Dependency).Complete();
 
-        DOTSEventsManager.Instance.TriggerOnHealthDead(onHealthDeadEntityList);
+        DOTSEventsManager.Instance?.TriggerOnHealthDead(onHealthDeadEntityList);
 
         onBarracksUnitQueueChangedEntityList.Clear();
         new ResetBuildingBarracksEventsJob()
@@ -48,7 +48,7 @@ partial struct ResetEventsSystem : ISystem
             onUnitQueueChangedEntityList = onBarracksUnitQueueChangedEntityList.AsParallelWriter(),
         }.ScheduleParallel(state.Dependency).Complete();
 
-        DOTSEventsManager.Instance.TriggerOnBarracksUnitQueueChanged(onBarracksUnitQueueChangedEntityList);
+        DOTSEventsManager.Instance?.TriggerOnBarracksUnitQueueChanged(onBarracksUnitQueueChangedEntityList);
         state.Dependency = JobHandle.CombineDependencies(jobHandleNativeArray);
     }
 
