@@ -6,7 +6,6 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Physics;
-using UnityEngine;
 
 public partial struct GridSystem : ISystem
 {
