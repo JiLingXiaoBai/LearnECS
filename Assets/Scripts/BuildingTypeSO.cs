@@ -18,6 +18,7 @@ public class BuildingTypeSO : ScriptableObject
 
     public BuildingType buildingType;
     public float buildingConstructionTimerMax;
+    public float constructionYOffset;
     public Transform prefab;
     public float buildingDistanceMin;
     public bool showInBuildingPlacementManagerUI;

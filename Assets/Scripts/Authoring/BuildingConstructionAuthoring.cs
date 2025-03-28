@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class BuildingConstructionAuthoring : MonoBehaviour
@@ -17,6 +18,8 @@ public struct BuildingConstruction : IComponentData
 {
     public float constructionTimer;
     public float constructionTimerMax;
+    public float3 startPosition;
+    public float3 endPosition;
     public BuildingTypeSO.BuildingType buildingType;
     public Entity finalPrefabEntity;
     public Entity visualEntity;

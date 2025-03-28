@@ -64,7 +64,8 @@ public class BuildingPlacementManager : MonoBehaviour
                     Entity buildingConstructionVisualEntity =
                         entityManager.Instantiate(buildingTypeSO.GetVisualPrefabEntity(entitiesReferences));
                     entityManager.SetComponentData(buildingConstructionVisualEntity,
-                        LocalTransform.FromPosition(mouseWorldPosition));
+                        LocalTransform.FromPosition(mouseWorldPosition +
+                                                    new Vector3(0, buildingTypeSO.constructionYOffset, 0)));
 
                     Entity buildingConstructionEntity =
                         entityManager.Instantiate(entitiesReferences.buildingConstructionPrefabEntity);
@@ -76,7 +77,9 @@ public class BuildingPlacementManager : MonoBehaviour
                         constructionTimer = 0f,
                         constructionTimerMax = buildingTypeSO.buildingConstructionTimerMax,
                         finalPrefabEntity = buildingTypeSO.GetPrefabEntity(entitiesReferences),
-                        visualEntity = buildingConstructionVisualEntity
+                        visualEntity = buildingConstructionVisualEntity,
+                        startPosition = mouseWorldPosition + new Vector3(0, buildingTypeSO.constructionYOffset, 0),
+                        endPosition = mouseWorldPosition,
                     });
                 }
             }
@@ -120,6 +123,16 @@ public class BuildingPlacementManager : MonoBehaviour
                         entityManager.GetComponentData<BuildingTypeSOHolder>(distanceHit.Entity);
 
                     if (buildingTypeSOHolder.buildingType == buildingTypeSO.buildingType)
+                    {
+                        return false;
+                    }
+                }
+                if (entityManager.HasComponent<BuildingConstruction>(distanceHit.Entity))
+                {
+                    BuildingConstruction buildingConstruction =
+                        entityManager.GetComponentData<BuildingConstruction>(distanceHit.Entity);
+
+                    if (buildingConstruction.buildingType == buildingTypeSO.buildingType)
                     {
                         return false;
                     }
